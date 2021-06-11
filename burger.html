@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Создай свой бургер</h1>
+    <form class="form">
+        <fieldset>
+            <legend>Выбери размер</legend>
+            <p><input type="radio" name="size" value="big" checked>Для больших людей</p>
+            <p><input type="radio" name="size" value="small">Я много не ем</p>
+        </fieldset>
+        <fieldset>
+            <legend>Выбери начинку</legend>
+            <p><input type="radio" name="filling" value="cheese" checked>Сырок</p>
+            <p><input type="radio" name="filling" value="salad">Салат</p>
+            <p><input type="radio" name="filling" value="potato">Картошечка</p>
+        </fieldset>
+        <fieldset>
+            <legend>Добавь еще что-нибудь</legend>
+            <p><input type="checkbox" name="filling" value="spice">Приправа</p>
+            <p><input type="checkbox" name="filling" value="mayo">Майонез</p>
+        </fieldset>
+        <button type="submit">Посчитать</button>
+        <h2>Итого:</h2>
+        <div>Стоимость: <span class="totalPrice">0</span> рублей.</div>
+		<div>Калорийность: <span class="totalKal">0</span> Кал.</div>
+    </form>
+
+    <script>
+        class Hamburger {
+            constructor() {
+                this.size =null;
+                this.stuffing = [];
+                this.price = 0;
+                this.kal = 0;
+                this.values = {
+                    big: {price: 100, kal: 40},
+                    small: {price: 50, kal: 20},
+                    cheese: {price: 10, kal: 20},
+                    salad: {price: 20, kal: 5},
+                    potato: {price: 15, kal: 10},
+                    spice: {price: 15, kal: 0},
+                    mayo: {price: 20, kal: 5},
+                };
+            }
+
+            init() {
+                document.querySelector('.form').addEventListener('submit', e => {
+                e.preventDefault();
+                this.getSize();
+                this.getToppings();
+                this.calculatePrice();
+                this.calculateCalories();        
+                });     
+            }
+            
+            getToppings() {
+                let checkedStuff = document.querySelectorAll('input[name="filling"]:checked');
+                checkedStuff.forEach((topping) => this.stuffing.push(topping.value));
+            } // Получить список добавок 
+
+            getSize() {
+                let checkedSize = document.querySelectorAll('input[name=size]:checked');
+                this.size = checkedSize[0].value;
+            } // Узнать размер гамбургера 
+
+            calculatePrice() {
+                let totalPrice = this.price = this.values[this.size].price;
+                this.stuffing.forEach(topping => totalPrice += this.values[topping].price)
+                document.querySelector('.totalPrice').innerHTML = totalPrice;
+            } // Узнать цену 
+            calculateCalories() {
+                let totalKal = this.kal = this.values[this.size].kal;
+                this.stuffing.forEach(topping => totalKal += this.values[topping].kal)
+                document.querySelector('.totalKal').innerHTML = totalKal;
+            } // Узнать калорийность 
+        }
+
+        let burger = new Hamburger;
+        burger.init();
+        
+    </script>
+</body>
+
+</html>
