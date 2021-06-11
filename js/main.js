@@ -1,21 +1,65 @@
-const products = [
-    {id: 1, title: 'Notebook', price: 2000, img: 'https://via.placeholder.com/250'},
-    {id: 2, title: 'Mouse', price: 20, img: 'https://via.placeholder.com/250'}, 
-    {id: 3, title: 'Keyboard', price: 200, img: 'https://via.placeholder.com/250'},
-    {id: 4, title: 'Gamepad', price: 50, img: 'https://via.placeholder.com/250'},
-];
-//Функция для формирования верстки каждого товара
-//Добавить в выводе изображение
-const renderProduct = (title = 'item', price = 0, img = 'https://via.placeholder.com/250') => {
-    return `<div class="product-item">
-                <img class="product-img" src="${img}">
-                <h3>${title}</h3>
-                <p>${price}</p>
-                <button class="buy-btn">Купить</button>
-            </div>`
-};
-const renderPage = list => {
-    document.querySelector('.products').innerHTML = list.map(item => renderProduct(item.title, item.price, item.img)).join('');
-};
+class ProductsList{
+    constructor(container = '.products') {
+        this.container = container;
+        this.goods = [];
+        this._fetchProducts();
+    }
 
-renderPage(products);
+    _fetchProducts() {
+        this.goods = [
+            {id: 1, title: 'Notebook', price: 2000},
+            {id: 2, title: 'Mouse', price: 20},
+            {id: 3, title: 'Keyboard', price: 200},
+            {id: 4, title: 'Gamepad', price: 50},
+        ];
+    }
+
+    render() {
+        const block = document.querySelector(this.container);
+        for(let product of this.goods) {
+            const productObj = new ProductItem(product);
+            block.insertAdjacentHTML('beforeend', productObj.render());
+        }
+    }
+
+    totalCostProducts() {
+        return this.goods.reduce(((total, product) => total + product.price),0);  
+    }
+}
+
+class ProductItem {
+    constructor(product, img = 'http://via.placeholder.com/250') {
+        this.title = product.title;
+        this.price = product.price;
+        this.id = product.id;
+        this.img = img;
+    }
+
+    render() {
+        return `<div class="product-item" data-id="${this.id}">
+        <img class="product-img" src="${this.img}" alt="${this.title}">
+        <h3>${this.title}</h3>
+        <p>${this.price}</p>
+        <button class="buy-btn">Купить</button>
+    </div>`
+    }
+}
+
+class CartList{
+    addToCart() {} // создает новый объект класса CartItem, вызывает метод render у этого объекта
+    deleteItem() {} // удаляет объект из массива списка товаров корзины
+    changeQuantity() {} //изменяет количетво товара
+    totalCostCart() {} // подсчитывает стоимость товаров в корзине
+    show() {} // корзина выпадает при нажатии на кнопку корзина
+    hide() {} // корзина скрывается
+}
+
+class CartItem{
+render() {} // возвращает строку с разметкой товара в корзине
+}
+
+
+
+let list = new ProductsList();
+list.render();
+list.totalCostProducts();
