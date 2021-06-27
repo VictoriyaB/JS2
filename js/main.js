@@ -12,14 +12,15 @@ const app = new Vue({
         cartItems: [],
         imgProduct: 'https://placehold.it/200x150',
         imgCart: 'https://placehold.it/50x100',
+        errorFetch: false,
        
     },
     methods: {
         getJson(url){
             return fetch(url)
                 .then(result => result.json())
-                .catch(error => {
-                    console.log(error);
+                .catch( () => {
+                    this.errorFetch = true;
                 })
         },
         filter(){
@@ -72,7 +73,7 @@ const app = new Vue({
                     this.products.push(el);
                     this.filtered.push(el);
                 }
-            })
+            });
         this.getJson(`${API + this.cartUrl}`)
             .then(data => {
                 for(let el of data.contents){
