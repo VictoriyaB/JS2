@@ -3,15 +3,16 @@ const API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-a
 const app = new Vue({
     el: '#app',
     data: {
+        userSearch: '',
+        showCart: false,
         catalogUrl: '/catalogData.json',
         cartUrl: '/getBasket.json',
         products: [],
         filtered: [],
-        cart: [],
-        imgCatalog: 'https://placehold.it/200x150',
+        cartItems: [],
+        imgProduct: 'https://placehold.it/200x150',
         imgCart: 'https://placehold.it/50x100',
-        userSearch: '',
-        show: false
+       
     },
     methods: {
         getJson(url){
@@ -23,42 +24,37 @@ const app = new Vue({
         },
         filter(){
             const regexp = new RegExp(this.userSearch, 'i');
-            this.filtered = this.products.filter(product => regexp.test(product.product_name));
+            this.filtered = this.products.filter(el => regexp.test(el.product_name));
 
         },
-        addProduct(product){
+        addProduct(item){
             this.getJson(`${API}/addToBasket.json`)
             .then(data => {
                 if(data.result === 1){
-                    let find = this.cart.find(el => el.id_product === product.id_product);
+                    let find = this.cartItems.find(el => el.id_product ===item.id_product);
                     if(find){
                         find.quantity++;
                     } else {
-                        let item = {
-                            id_product: product.id_product,
-                            price: product.price,
-                            product_name: product.product_name,
-                            quantity: 1
-                        };
-                        this.cart.push(item);
+                        const prod = Object.assign({quantity: 1}, item);
+                        this.cartItems.push(prod);
                     }
                 } else {
                     alert('Error');
                 }
             })
         },
-        deleteProduct(product){
-            this.cart.splice(this.cart.indexOf(product), 1); 
+        remove(item){
+            this.cartItems.splice(this.cartItems.indexOf(item), 1); 
         },
-        reduceQuantity(product){
-            if(product.quantity > 1){
-            product.quantity--;
+        reduceQuantity(item){
+            if(item.quantity > 1){
+            item.quantity--;
         } else {
-            this.deleteProduct(product);
+            this.remove(item);
         }
         },
-        increaseQuantity(product){
-            product.quantity++;
+        increaseQuantity(item){
+            item.quantity++;
         },
     },
     mounted(){
@@ -80,7 +76,7 @@ const app = new Vue({
         this.getJson(`${API + this.cartUrl}`)
             .then(data => {
                 for(let el of data.contents){
-                    this.cart.push(el);
+                    this.cartItems.push(el);
                 }
             });
     }
